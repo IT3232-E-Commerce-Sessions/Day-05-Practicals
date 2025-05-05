@@ -2,152 +2,93 @@
 
 
 ## Description
-This project demonstrates the implementation of entity relationships in Spring Boot using JPA and Hibernate. The application models a company structure with Departments, Employees, and Projects, showcasing different types of relationships (One-to-Many, Many-to-One, and Many-to-Many).
-
-## Table of Contents
-- [Day-05-Practicals Session](#day-05-practicals-session)
-  - [Description](#description)
-  - [Table of Contents](#table-of-contents)
-  - [Entity Models](#entity-models)
-    - [Department Entity](#department-entity)
-    - [Employee Entity](#employee-entity)
-    - [Project Entity](#project-entity)
-  - [Relationships](#relationships)
-    - [One-to-Many: Between Department and Employee](#one-to-many-between-department-and-employee)
-    - [Many-to-One: Between Employee and Department](#many-to-one-between-employee-and-department)
-    - [Many-to-Many: Between Employee and Project](#many-to-many-between-employee-and-project)
-  - [Database Configuration](#database-configuration)
-    - [Dependencies](#dependencies)
-    - [Usage](#usage)
-
-## Entity Models
-
-### Department Entity
-```java
-package com.example.firstapp.model;
-
-import java.sql.Date;
-import java.util.List;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-
-@Entity
-public class Department {
-        @Id
-        @Column(name="dept_id")
-        private int id;
-
-        @Column(nullable = false)
-        private String name;
-
-        private Date established;
-
-        @OneToMany(mappedBy = "department")
-        private List<Employee> employees;
-
-        // Constructor and getter/setter methods
-        // ...
-}
-```
-
-### Employee Entity
-```java
-package com.example.firstapp.model;
-
-import java.util.List;
-
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
-
-@Entity
-public class Employee {
-        @Id
-        private String empNo;
-        private String name;
-        private int age;
-        private double salary;
-        private String gender;
-
-        @ManyToOne
-        private Department department;
-
-        @ManyToMany(mappedBy = "employees")
-        private List<Project> projet;
-
-        // Constructor and getter/setter methods
-        // ...
-}
-```
-
-### Project Entity
-```java
-package com.example.firstapp.model;
-
-import java.util.List;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
-
-@Entity
-public class Project {
-        @Id
-        @Column(name="pro_id")
-        private int id;
-        private String name;
-        private long totalCost;
-
-        @ManyToMany
-        private List<Employee> employees;
-
-        // Constructor and getter/setter methods
-        // ...
-}
-```
-
-## Relationships
-
-### One-to-Many: Between Department and Employee
-- One department can have many employees.
-- In the `Department` class, `@OneToMany(mappedBy = "department")` indicates that one department relates to many employees.
-- The `mappedBy` attribute references the field in `Employee` that owns the relationship.
-
-### Many-to-One: Between Employee and Department
-- Many employees can belong to one department.
-- In the `Employee` class, `@ManyToOne` establishes this relationship.
-- This is the inverse of the One-to-Many relationship defined in `Department`.
-
-### Many-to-Many: Between Employee and Project
-- Many employees can work on many projects.
-- Many projects can have many employees.
-- This requires a join table in the database to track which employees are assigned to which projects.
-- In the `Project` class, `@ManyToMany` defines the owning side of the relationship.
-- In the `Employee` class, `@ManyToMany(mappedBy = "employees")` indicates the inverse side.
-
-## Database Configuration
-The application is configured to connect to a MySQL database with the following properties:
-
-```properties
-spring.application.name=newapp
-spring.datasource.url=jdbc:mysql://localhost:3306/employeeDB
-spring.datasource.username=root
-spring.datasource.password=
-spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
-spring.jpa.hibernate.ddl-auto=update
-```
-
-### Dependencies
-The project uses the following Spring Boot dependencies:
-- **Spring Web**: For building RESTful web services
-- **Spring Data JPA**: For simplified data access using JPA
-- **MySQL Driver**: For connecting to MySQL database
+A Spring Boot application for managing students, courses, and instructors with basic CRUD operations.
 
 
-### Usage
-This project serves as a foundation for building a complete CRUD application for managing departments, employees, and projects
+## API Endpoints
+
+### Student Controller (`/students`)
+- `GET /students` - Get all students
+- `GET /students/{regNo}` - Get student by registration number
+- `POST /students` - Create new student
+- `PUT /students/{regNo}` - Update student
+- `DELETE /students/{regNo}` - Delete student
+
+### Course Controller (`/course`)
+- `GET /course` - Get all courses
+- `GET /course/{code}` - Get course by code
+- `POST /course` - Create new course
+- `PUT /course/{code}` - Update course
+- `DELETE /course/{code}` - Delete course
+
+### Instructor Controller (`/instructor`)
+- `GET /instructor` - Get all instructors
+- `GET /instructor/{empID}` - Get instructor by employee ID
+- `POST /instructor` - Create new instructor
+- `PUT /instructor/{empID}` - Update instructor
+- `DELETE /instructor/{empID}` - Delete instructor
+
+## Models
+
+### Student
+- `name`: String
+- `age`: int
+- `regNo`: String (unique identifier)
+- `course`: String
+- `gpa`: double
+
+### Course
+- `name`: String
+- `code`: String (unique identifier)
+- `credits`: int
+- `lecturer`: String
+
+### Instructor
+- `name`: String
+- `empID`: int (unique identifier)
+- `subject`: String
+
+## Sample Data
+
+### Students
+| Registration No | Name            | Age | Course | GPA |
+|-----------------|-----------------|-----|--------|-----|
+| IT1001          | John Doe        | 24  | DS     | 3.5 |
+| IT1012          | Chris Hemsworth | 25  | SE     | 3.2 |
+| IT1005          | James Moriyati  | 23  | ML     | 3.9 |
+
+### Courses
+| Code   | Name         | Credits | Lecturer     |
+|--------|--------------|---------|--------------|
+| IT3232 | ECommerce    | 2       | A.Alex       |
+| IT2234 | WebServices  | 3       | J.Moriyati   |
+| IT3132 | SQA          | 1       | J.Doe        |
+
+### Instructors
+| Employee ID | Name        | Subject     |
+|-------------|-------------|-------------|
+| 15012       | carnis      | ECommerce   |
+| 15065       | maria       | WebServices |
+| 15098       | alex        | SQA         |
+
+## Technology Stack
+- Java 17
+- Spring Boot 3.x
+- RESTful Web Services
+- Maven (assumed)
+
+## Installation & Usage
+
+1. Clone the repository
+2. Import as Maven project in your IDE
+3. Run the Spring Boot application
+4. Access endpoints using:
+   - http://localhost:8080/students
+   - http://localhost:8080/course
+   - http://localhost:8080/instructor
+
+
+
+- Built using a generic CRUDController superclass for common operations
+- In-memory data storage using HashMap
+- All controllers implement standard CRUD operations
